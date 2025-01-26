@@ -5,6 +5,7 @@
   <script>
   import * as THREE from "three";
   import { onMounted, onUnmounted, ref } from "vue";
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
   
   export default {
     setup() {
@@ -22,9 +23,11 @@
           1000
         );
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-  
         renderer.setSize(container.offsetWidth, container.offsetHeight);
         container.appendChild(renderer.domElement);
+  
+        // Change background color of the scene
+        scene.background = new THREE.Color(0x222222); // Dark gray
   
         // Create a cube
         const geometry = new THREE.BoxGeometry();
@@ -38,7 +41,13 @@
         scene.add(light);
   
         // Position the camera
-        camera.position.z = 5;
+        camera.position.set(0, 0, 5);
+  
+        // Add OrbitControls for mouse interaction
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Smooth the movement
+        controls.dampingFactor = 0.1;
+        controls.enableZoom = true; // Enable zooming with mouse scroll
   
         // Handle window resize
         const onWindowResize = () => {
@@ -55,6 +64,9 @@
           // Rotate the cube
           cube.rotation.x += 0.01;
           cube.rotation.y += 0.01;
+  
+          // Update the controls
+          controls.update();
   
           renderer.render(scene, camera);
         };
